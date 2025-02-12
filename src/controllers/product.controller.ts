@@ -13,7 +13,7 @@ const addProduct = async (req: Request, res: Response): Promise<Response> => {
             return res.status(400).json({ message: 'Required all fields' });
         }
 
-        if (isNaN(Number(price)) && isNaN(Number(stock)) && typeof name !== 'number' && typeof description !== 'number') {
+        if (isNaN(Number(price)) && isNaN(Number(stock)) && typeof name !== 'string' && typeof description !== 'string') {
 
             return res.status(400).json({ message: 'Please provide valid properties' });
         }
