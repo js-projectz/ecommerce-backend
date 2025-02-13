@@ -13,7 +13,7 @@ const addProduct = async (req: Request, res: Response): Promise<Response> => {
             return res.status(400).json({ message: 'Required all fields' });
         }
 
-        if (isNaN(Number(price)) && isNaN(Number(stock)) && typeof name !== 'string' && typeof description !== 'string') {
+        if (isNaN(Number(price)) && isNaN(Number(stock)) || typeof name !== 'string' && typeof description !== 'string') {
 
             return res.status(400).json({ message: 'Please provide valid properties' });
         }
@@ -25,7 +25,8 @@ const addProduct = async (req: Request, res: Response): Promise<Response> => {
 
     }
     catch (err: any) {
-        return res.status(500).json({ messge: err.messge });
+        console.error(err);
+        return res.status(500).json({ message: err.message });
     }
 };
 
@@ -38,7 +39,7 @@ const getAllProducts = async (req: Request, res: Response): Promise<Response> =>
         return res.status(200).json({ data: products });
     }
     catch (err: any) {
-        return res.status(500).json({ message: err.messge });
+        return res.status(500).json({ message: err.message });
     }
 
 };
@@ -80,19 +81,19 @@ const udpateProduct = async (req: Request, res: Response): Promise<Response> => 
     try {
 
         const id = req.params.id;
-        const { description, price, stock } = req.body;
+        const { name, description, price, stock } = req.body;
 
-        if (typeof description !== 'string' || isNaN(Number(stock)) || isNaN(Number(price)) || isNaN(Number(id))) return res.status(400).json({ message: 'Please provide valid properties' });
+        if (typeof description !== 'string' || typeof name !== 'string' || isNaN(Number(stock)) || isNaN(Number(price)) || isNaN(Number(id))) return res.status(400).json({ message: 'Please provide valid properties' });
 
         if (!id) return res.status(400).json({ message: 'Please provide the ID' });
 
-        const [rows]: any = await db.execute('SELECT * FROM PRODUCTS WHERE ID = ?'[Number(id)]);
+        const [rows]: any = await db.execute('SELECT * FROM PRODUCTS WHERE ID = ?', [Number(id)]);
 
         if (rows.length === 0) {
             return res.status(401).json({ error: 'Invalid Id 0r Product is not found' });
         }
 
-        await db.execute('UPDATE PRODUCTS SET description = ?, price = ?, stock = ?', [description, price, stock]);
+        await db.execute('UPDATE PRODUCTS SET name = ?, description = ?, price = ?, stock = ? WHERE ID = ?', [name, description, price, stock, Number(id)]);
 
         // Fetch the user from the db
         const [product]: any = await db.execute('SELECT * FROM PRODUCTS WHERE ID = ?', [Number(id)]);
@@ -105,4 +106,23 @@ const udpateProduct = async (req: Request, res: Response): Promise<Response> => 
     }
 };
 
-export { addProduct, getProductById, getAllProducts, udpateProduct };
+
+// Delete the product
+const deleteProduct = async (req: Request, res: Response): Promise<Response> => {
+
+    try {
+        const id = req.params.id;
+
+        if (!id) return res.status(400).json({ messasge: 'Please provide the ID' });
+        if (isNaN(Number(id))) return res.status(400).json({ message: 'Please provide valid properites' });
+
+        await db.execute('DELETE FROM PRODUCTS WHERE ID = ?', [Number(id)]);
+
+        return res.status(200).json({ message: 'Product deleted sucessfully' });
+    }
+    catch (err: any) {
+        return res.status(500).json({ message: err.message });
+    };
+}
+
+export { addProduct, getProductById, getAllProducts, udpateProduct, deleteProduct };

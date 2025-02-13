@@ -1,6 +1,11 @@
-import { Router, Request, Response, NextFunction, RequestParamHandler } from 'express';
-import { deleteProfile, getUserProfile, loginUser, registerUser, Updateprofile } from '../controllers/user.controller';
-import { stripTypeScriptTypes } from 'module';
+import { Router, Request, Response } from 'express';
+import {
+    deleteProfile,
+    getUserProfile,
+    loginUser,
+    registerUser,
+    Updateprofile
+} from '../controllers/user.controller';
 
 const router = Router();
 
