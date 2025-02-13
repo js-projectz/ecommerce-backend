@@ -16,7 +16,7 @@ router.post('/add-product', async (req: Request, res: Response) => {
         await addProduct(req, res);
     }
     catch (err: any) {
-        console.error(err.message);
+        // console.error(err.message);
         const statusCode = err.status;
         res.status(statusCode).json({
             message: 'Product add failed',
