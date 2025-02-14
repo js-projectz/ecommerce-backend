@@ -11,7 +11,7 @@ const router = Router();
 router.post('/add-order', async (req: Request, res: Response) => {
 
     try {
-        if (req.method !== 'POST') {
+        if (req.method !== 'post') {
             res.status(405).json({ message: 'Method Not Allowed. Use POST.' });
             return;
         }
@@ -23,7 +23,7 @@ router.post('/add-order', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/list-order', async (req: Request, res: Response) => {
+router.get('/list-order/:user_id', async (req: Request, res: Response) => {
 
     try {
         await getOrdersByUser(req, res);
